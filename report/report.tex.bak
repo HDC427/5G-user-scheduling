@@ -1,0 +1,81 @@
+\documentclass[10pt, oneside]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+
+\begin{document}
+\subsubsection{Question 1.} For $k\in\mathcal{K}, n\in\mathcal{N}, m=1,\dots,M$, we define the binary variables $x_{k,m,n}\in\{0,1\}$ such that $x_{k,m,n}=1$ if and only if $p_{k,m,n}\le p_{k,n}<p_{k,m+1,n}$, with $p_{k,M+1,n}$ interpreted as $+\infty$. Thus, the constraint by the total power budget is
+$$
+\sum_{\substack{k\in\mathcal{K}\\n\in\mathcal{N}\\m=1,\dots,M}}p_{k,m,n}x_{k,m,n}\le p
+$$
+the constraint that each channel serves one and only one user is
+$$
+\sum_{\substack{k\in\mathcal{K}\\m=1,\dots,M}}x_{k,m,n}=1, \, \forall n\in\mathcal{N}
+$$
+and the target function is
+$$
+U:=\sum_{\substack{k\in\mathcal{K}\\n\in\mathcal{N}\\m=1,\dots,M}}r_{k,m,n}x_{k,m,n}
+$$
+
+In all, we have the ILP below
+\begin{eqnarray}
+x_{k,m,n}&\in&\{0,1\} \\
+\sum_{k,m,n}p_{k,m,n}x_{k,m,n}&\le& p \\
+\sum_{k,m}x_{k,m,n}&=&1, \, \forall n\in\mathcal{N}
+\end{eqnarray}
+with target function
+$$
+U:=\sum_{k,m,n}r_{k,m,n}x_{k,m,n}
+$$
+the corresponding LP is obtained by replacing (1) with $x_{k,m,n}\in[0,1]$
+
+\subsubsection{Question 2.} Proof of \textbf{Lemma 1}
+
+Suppose $p_{k,m,n}\le p_{k',m',n}$ and $r_{k,m,n}\ge r_{k',m',n}$. Given an optimal solution to the ILP, if $x_{k',m',n}\ne0$, then $x_{k',m',n}=1$ by (1). If we replace $x_{k,m,n}$ by 1 and $x_{k',m',n}$ by 0, (1) and (3) are clearly satisfied, (2) is also satisfied since $p_{k,m,n}\le p_{k',m',n}$, and $U$ will not decrease since $r_{k,m,n}\ge r_{k',m',n}$, so we get an optimal where $x_{k',m',n}=0$
+
+\subsubsection{Question 3.}
+\noindent\textsc{remove-IP-dominated}(n)\\
+1\quad sort the pairs $(p_{k,m,n}, r_{k,m,n})$ in increasing order of $p_{k,m,n}$ into an array A\\
+2\quad cm = A[0].r\\
+3\quad \textbf{for} i = 0 to A.length-1\\
+4\quad \qquad \textbf{if} A[i].r $\ge$ cm\\
+5\quad \qquad \qquad cm = A[i].r\\
+6\quad \qquad \textbf{else} remove A[i].p and A[i].r from the original data
+
+sorting $p_{k,m,m}$ takes time $O(KM\log(KM))$, the loop from line 3 takes time $O(KM)$. We will run \textsc{remove-IP-dominated} for each $n\in\mathcal{N}$, so in all it takes time $O(NKM\log(KM))$ to remove IP-dominated terms.
+
+\noindent\textsc{N.B.} Accounting for that $p_{k,m,n}$ is increasing according to $m$ for $k,n$ fixed, we may sort quicker in line 1 and achieve a complexity of $O(NKM\log(K)$.
+
+\subsubsection{Question 4.}
+Proof of \textbf{Lemma 2}
+
+Suppose $p_{k,m,n}\le p_{k',m',n}\le p_{k'',m'',n}$ and 
+\begin{equation}
+\frac{r_{k'',m'',n}-r_{k',m',n}}{p_{k'',m'',n}-p_{k',m',n}}\ge\frac{r_{k',m',n}-r_{k,m,n}}{p_{k',m',n}-p_{k,m,n}}
+\end{equation}
+note that we have 
+\begin{equation}
+p_{k',m',n}=p_{k,m,n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}+p_{k'',m'',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
+\end{equation}
+and from (4) we can deduce that 
+\begin{equation}
+r_{k',m',n}\le r_{k,m,n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}+r_{k'',m'',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
+\end{equation}
+Given an optimal solution to the LP, we can construct another solution with 
+\begin{align*}
+x'_{k,m,n}&=x_{k,m,n}+x_{k',m',n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}\\
+x'_{k',m',n}&=0\\
+x'_{k'',m'',n}&=x_{k'',m'',n}+x_{k',m',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
+\end{align*}
+(3) is satisfied since $x'_{k,m,n}+x'_{k',m',n}+x'_{k'',m'',n}=x_{k,m,n}+x_{k',m',n}+x_{k'',m'',n}$, and so is (2) since $x'_{k,m,n},\,x'_{k',m',n},\,x'_{k'',m'',n}\ge0$ and none of them can surpass 1 or else one of the $x'{\cdot,\cdot,n}$ would be negative.
+
+(2) is satisfied owing to (5), and $U'\ge U$ owing to (6). Thus we get an optimal solution where $x_{k',m',n}=0$ 
+
+In the pseudo-code below, we consider the input as points in the plane with coordinates $(p_{k,m,n},r_{k,m,n})$. For simplicity, for a stack S, we note S[0] the top element and S[1] the second top one.
+
+\noindent\textsc{remove-LP-dominated}(n)\\
+1\quad find the points with $p_{k,m,n}$ minimal, then find the one with $r_{k,m,n}$ maximal amongst, noted as $P_0$\\
+2\quad let S be a stack and \textsc{Push}($P_0$, S)
+\end{document}
