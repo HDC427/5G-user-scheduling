@@ -42,7 +42,7 @@ Suppose $p_{k,m,n}\le p_{k',m',n}$ and $r_{k,m,n}\ge r_{k',m',n}$. Given an opti
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
-\item sort the pairs $(p_{k,m,n}, r_{k,m,n})$ in increasing order of $p_{k,m,n}$ into an array A
+\item sort the pairs $(p_{k,m,n}, r_{k,m,n})$ in increasing order of $p_{k,m,n}$ into an array A. If several pairs have the same $p$, leave only the one with the greatest $r$
 \item cm = A[0].r
 \item \textbf{for} i = 0 to A.length-1
 \item \qquad \textbf{if} A[i].r $\ge$ cm
@@ -58,19 +58,19 @@ sorting $p_{k,m,m}$ takes time $O(KM\log(KM))$, the loop from line 3 takes time 
 \subsubsection{Question 4.}
 Proof of \textbf{Lemma 2}
 
-Suppose $p_{k,m,n}\le p_{k',m',n}\le p_{k'',m'',n}$ and 
+Suppose $p_{k,m,n}\le p_{k',m',n}\le p_{k'',m'',n}$ and
 \begin{equation}
 \frac{r_{k'',m'',n}-r_{k',m',n}}{p_{k'',m'',n}-p_{k',m',n}}\ge\frac{r_{k',m',n}-r_{k,m,n}}{p_{k',m',n}-p_{k,m,n}}
 \end{equation}
-note that we have 
+note that we have
 \begin{equation}
 p_{k',m',n}=p_{k,m,n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}+p_{k'',m'',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
 \end{equation}
-and from (4) we can deduce that 
+and from (4) we can deduce that
 \begin{equation}
 r_{k',m',n}\le r_{k,m,n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}+r_{k'',m'',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
 \end{equation}
-Given an optimal solution to the LP, we can construct another solution with 
+Given an optimal solution to the LP, we can construct another solution with
 \begin{align*}
 x'_{k,m,n}&=x_{k,m,n}+x_{k',m',n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}\\
 x'_{k',m',n}&=0\\
@@ -78,9 +78,9 @@ x'_{k'',m'',n}&=x_{k'',m'',n}+x_{k',m',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m''
 \end{align*}
 (3) is satisfied since $x'_{k,m,n}+x'_{k',m',n}+x'_{k'',m'',n}=x_{k,m,n}+x_{k',m',n}+x_{k'',m'',n}$, and so is (2) since $x'_{k,m,n},\,x'_{k',m',n},\,x'_{k'',m'',n}\ge0$ and none of them can surpass 1 or else one of the $x'{\cdot,\cdot,n}$ would be negative.
 
-(2) is satisfied owing to (5), and $U'\ge U$ owing to (6). Thus we get an optimal solution where $x_{k',m',n}=0$ 
+(2) is satisfied owing to (5), and $U'\ge U$ owing to (6). Thus we get an optimal solution where $x_{k',m',n}=0$
 
-In the pseudo-code below, we consider the input as points in the plane with coordinates $(p_{k,m,n},r_{k,m,n})$. For simplicity, for a stack S, we note S[0] the top element and S[1] the second top one; for tow points $A,B$ in the plane, we note $L(A,B)$ the slope of the line formed by them; we say $B$ is \emph{dominated} by $A$ and $C$ if and only if $A.p\le B.p\le C.p$ and $L(A,B)\le L(B,C)$, which is just another interpretation of (4)
+In the pseudo-code below, we consider the input as points in the plane with coordinates $(p_{k,m,n},r_{k,m,n})$. For simplicity, for a stack S, we note S[0] the top element and S[1] the second top one; for tow points $A,B$ in the plane, we note $L(A,B)$ the slope of the line formed between them; we say $B$ is \emph{dominated} by $A$ and $C$ if and only if $A.p\le B.p\le C.p$ and $L(A,B)\le L(B,C)$, which is just another interpretation of (4)
 
 \hspace{1em}
 
@@ -88,27 +88,26 @@ In the pseudo-code below, we consider the input as points in the plane with coor
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
-\item find the points with $p_{k,m,n}$ minimal, then find the one with $r_{k,m,n}$ maximal amongst, noted as $P_0$
-\item let S be a stack and \textsc{Push}($P_0$, S)
-\item sort the other $(p_{k,m,n},r_{k,m,n})$ in an array A in decreasing order of the slope of the line formed between each of them and $P_0$
+\item sort the pairs $(p_{k,m,n}, r_{k,m,n})$ in increasing order of $p_{k,m,n}$ into an array A. If several pairs have the same $p$, leave only the one with the greatest $r$
+\item let S be a stack
 \item \textsc{Push}(A[0], S)
-\item \textbf{for} i = 1 to A.length-1
-\item \qquad \textbf{if} A[i].p $>$ S[0].p
-\item \qquad\qquad \textbf{while} $L$(A[i],S[0]) $\ge$ $L$(S[0],S[1])
-\item \qquad\qquad\qquad \textsc{Pop}(S)
-\item \qquad\qquad \textsc{Push}(A[i], S)
+\item \textsc{Push}(A[1], S)
+\item \textbf{for} i = 2 to A.length-1
+\item \qquad \textbf{while} $L$(A[i],S[0]) $\ge$ $L$(S[0],S[1])
+\item \qquad \qquad\textsc{Pop}(S)
+\item \qquad \textsc{Push}(A[i], S)
 \item \textbf{return} S
 \end{enumerate}
 
-\noindent\textbf{Proof of correctness} We use the loop invariant that after each iteration of line 5, S contains exactly all the points that are not dominated by points from A[0] to A[i]
+\noindent\textbf{Proof of correctness} We use the loop invariant that after each iteration of line 5, S contains exactly all the points that are not dominated by points from A[0] to A[i], the line segments form a convex curve.
 
-The invariant trivially holds before line 5. Suppose it holds before the ith iteration. If A[i].p $\le$ S[0].p, by the way we sorted the points in line 3, A[i] is dominated by $P_0$ and S[0], and none of the points in S can be dominated by A[i] and some points from A[0] to A[i-1], so the algorithm does nothing and continue with the (i+1)th iteration. 
+The invariant trivially holds before line 5. Suppose it holds before the ith iteration. During the ith iteration, the points removed by line 7 are clearly dominated by A[i] and S[1]. After the \textbf{while} loop terminates, we can be sure that all points in A between S[0] and A[i] are dominated by these two points and thus cannot be added to S, nor can the points between A[0] and S[0] by the loop invariant.
 
-If A[i].p $>$ S[0].p, the \textbf{while} loop removes all the points in S that are dominated by the point under it in S and A[i]. Suppose the \textbf{while} loop stops at $P$, that is, the top point in S after the \textbf{while} loop. This means $L(Q,P)>L$($P$,A[i]) where $Q$ is the point under $P$ in S. In fact $L(Q,P)>L$($P$,A[i]) for all $Q$ other than $P$ remaining in S because as $Q$ goes down in S, $L(Q,P)$ increases by the loop invariant. Since $Q$ is not dominated by $A\in\{$A[0] to A[i-1]$\}$ and $P$, nor is it by $A$ and A[i]. Thus, if we push A[i] into S, the invariant still holds.
+Note that the ponits in S form a convex curve, so that by $L$(A[i],S[0]) $<$ $L$(S[0],S[1]) we have that after line 8 the points in S still form a convex curve and so no points in S are dominated by points from A[0] to A[i], and by the arguments above, these are exactly all the points that have this property.
 
 \hspace{1em}
 
-\noindent\textbf{Time complexity} Line 1 takes time $O(KM)$. Line 3 takes time $O(KM\log(KM))$. Regarding the \textbf{for} loop from line 5 to 9, note that each point can only be pushed or popped only once, so in all the \textbf{for} loop takes time $O(KM)$. We run the algorithm for each $n\in\mathcal{N}$, so altogether it takes time $O(NKM\log(KM))$ to remove all LP-dominated terms.
+\noindent\textbf{Time complexity} Line 1 takes time $O(KM\log(KM))$. Regarding the \textbf{for} loop from line 5 to 8, note that each point can only be pushed or popped only once, so in all the \textbf{for} loop takes time $O(KM)$. We run the algorithm for each $n\in\mathcal{N}$, so altogether it takes time $O(NKM\log(KM))$ to remove all LP-dominated terms.
 
 
 \end{document}
