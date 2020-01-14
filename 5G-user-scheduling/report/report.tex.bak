@@ -1,0 +1,158 @@
+\documentclass[11pt, oneside]{report}
+\usepackage[left=3cm,right=3cm,top=4cm,bottom=4cm, headheight=1.5cm,headsep=1.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{enumerate}
+
+\begin{document}
+\subsubsection{Question 1.} For $k\in\mathcal{K}, n\in\mathcal{N}, m=1,\dots,M$, we define the binary variables $x_{k,m,n}\in\{0,1\}$ such that $x_{k,m,n}=1$ if and only if $p_{k,m,n}\le p_{k,n}<p_{k,m+1,n}$, with $p_{k,M+1,n}$ interpreted as $+\infty$. Thus, the constraint by the total power budget is
+$$
+\sum_{\substack{k\in\mathcal{K}\\n\in\mathcal{N}\\m=1,\dots,M}}p_{k,m,n}x_{k,m,n}\le p
+$$
+the constraint that each channel serves one and only one user is
+$$
+\sum_{\substack{k\in\mathcal{K}\\m=1,\dots,M}}x_{k,m,n}=1, \, \forall n\in\mathcal{N}
+$$
+and the target function is
+$$
+U:=\sum_{\substack{k\in\mathcal{K}\\n\in\mathcal{N}\\m=1,\dots,M}}r_{k,m,n}x_{k,m,n}
+$$
+
+In all, we have the ILP below
+\begin{eqnarray}
+x_{k,m,n}&\in&\{0,1\} \\
+\sum_{k,m,n}p_{k,m,n}x_{k,m,n}&\le& p \\
+\sum_{k,m}x_{k,m,n}&=&1, \, \forall n\in\mathcal{N}
+\end{eqnarray}
+with target function
+$$
+U:=\sum_{k,m,n}r_{k,m,n}x_{k,m,n}
+$$
+the corresponding LP is obtained by replacing (1) with $x_{k,m,n}\in[0,1]$
+
+\subsubsection{Question 2.} Proof of \textbf{Lemma 1}
+
+Suppose $p_{k,m,n}\le p_{k',m',n}$ and $r_{k,m,n}\ge r_{k',m',n}$. Given an optimal solution to the ILP, if $x_{k',m',n}\ne0$, then $x_{k',m',n}=1$ by (1). If we replace $x_{k,m,n}$ by 1 and $x_{k',m',n}$ by 0, (1) and (3) are clearly satisfied, (2) is also satisfied since $p_{k,m,n}\le p_{k',m',n}$, and $U$ will not decrease since $r_{k,m,n}\ge r_{k',m',n}$, so we get an optimal where $x_{k',m',n}=0$
+
+\hspace{1em}
+\subsubsection{Question 3.}
+\noindent\textsc{remove-IP-dominated}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item sort the pairs $(p_{k,m,n}, r_{k,m,n})$ in increasing order of $p_{k,m,n}$ into an array A. If several pairs have the same $p$, leave only the one with the greatest $r$
+\item cm = A[0].r
+\item \textbf{for} i = 0 to A.length-1
+\item \qquad \textbf{if} A[i].r $\ge$ cm
+\item \qquad \qquad cm = A[i].r
+\item \qquad \textbf{else} remove A[i].p and A[i].r from the original data
+\end{enumerate}
+
+
+sorting $p_{k,m,m}$ takes time $O(KM\log(KM))$, the loop from line 3 takes time $O(KM)$. We will run \textsc{remove-IP-dominated} for each $n\in\mathcal{N}$, so in all it takes time $O(NKM\log(KM))$ to remove IP-dominated terms.
+
+\noindent\textsc{N.B.} Accounting for that $p_{k,m,n}$ is increasing according to $m$ for $k,n$ fixed, we may sort quicker in line 1 and achieve a complexity of $O(NKM\log(K)$.
+
+\subsubsection{Question 4.}
+Proof of \textbf{Lemma 2}
+
+Suppose $p_{k,m,n}\le p_{k',m',n}\le p_{k'',m'',n}$ and
+\begin{equation}
+\frac{r_{k'',m'',n}-r_{k',m',n}}{p_{k'',m'',n}-p_{k',m',n}}\ge\frac{r_{k',m',n}-r_{k,m,n}}{p_{k',m',n}-p_{k,m,n}}
+\end{equation}
+note that we have
+\begin{equation}
+p_{k',m',n}=p_{k,m,n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}+p_{k'',m'',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
+\end{equation}
+and from (4) we can deduce that
+\begin{equation}
+r_{k',m',n}\le r_{k,m,n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}+r_{k'',m'',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
+\end{equation}
+Given an optimal solution to the LP, we can construct another solution with
+\begin{align*}
+x'_{k,m,n}&=x_{k,m,n}+x_{k',m',n}\frac{p_{k'',m'',n}-p_{k',m',n}}{p_{k'',m'',n}-p_{k,m,n}}\\
+x'_{k',m',n}&=0\\
+x'_{k'',m'',n}&=x_{k'',m'',n}+x_{k',m',n}\frac{p_{k',m',n}-p_{k,m,n}}{p_{k'',m'',n}-p_{k,m,n}}
+\end{align*}
+(3) is satisfied since $x'_{k,m,n}+x'_{k',m',n}+x'_{k'',m'',n}=x_{k,m,n}+x_{k',m',n}+x_{k'',m'',n}$, and so is (2) since $x'_{k,m,n},\,x'_{k',m',n},\,x'_{k'',m'',n}\ge0$ and none of them can surpass 1 or else one of the $x'{\cdot,\cdot,n}$ would be negative.
+
+(2) is satisfied owing to (5), and $U'\ge U$ owing to (6). Thus we get an optimal solution where $x_{k',m',n}=0$
+
+In the pseudo-code below, we consider the input as points in the plane with coordinates $(p_{k,m,n},r_{k,m,n})$. For simplicity, for a stack S, we note S[0] the top element and S[1] the second top one; for tow points $A,B$ in the plane, we note $L(A,B)$ the slope of the line formed between them; we say $B$ is \emph{dominated} by $A$ and $C$ if and only if $A.p\le B.p\le C.p$ and $L(A,B)\le L(B,C)$, which is just another interpretation of (4)
+
+\hspace{1em}
+
+\noindent\textsc{remove-LP-dominated}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item sort the pairs $(p_{k,m,n}, r_{k,m,n})$ in increasing order of $p_{k,m,n}$ into an array A. If several pairs have the same $p$, leave only the one with the greatest $r$
+\item let S be a stack
+\item \textsc{Push}(A[0], S)
+\item \textsc{Push}(A[1], S)
+\item \textbf{for} i = 2 to A.length-1
+\item \qquad \textbf{while} $L$(A[i],S[0]) $\ge$ $L$(S[0],S[1])
+\item \qquad \qquad\textsc{Pop}(S)
+\item \qquad \textsc{Push}(A[i], S)
+\item \textbf{return} S
+\end{enumerate}
+
+\noindent\textbf{Proof of correctness} We use the loop invariant that after each iteration of line 5, S contains exactly all the points that are not dominated by points from A[0] to A[i], the line segments form a convex curve.
+
+The invariant trivially holds before line 5. Suppose it holds before the ith iteration. During the ith iteration, the points removed by line 7 are clearly dominated by A[i] and S[1]. After the \textbf{while} loop terminates, we can be sure that all points in A between S[0] and A[i] are dominated by these two points and thus cannot be added to S, nor can the points between A[0] and S[0] by the loop invariant.
+
+Note that the ponits in S form a convex curve, so that by $L$(A[i],S[0]) $<$ $L$(S[0],S[1]) we have that after line 8 the points in S still form a convex curve and so no points in S are dominated by points from A[0] to A[i], and by the arguments above, these are exactly all the points that have this property.
+
+\hspace{1em}
+
+\noindent\textbf{Time complexity} Line 1 takes time $O(KM\log(KM))$. Regarding the \textbf{for} loop from line 5 to 8, note that each point can only be pushed or popped only once, so in all the \textbf{for} loop takes time $O(KM)$. We run the algorithm for each $n\in\mathcal{N}$, so altogether it takes time $O(NKM\log(KM))$ to remove all LP-dominated terms.
+
+\subsubsection{Question 5.}
+\textbf{TO DO After coding}
+
+\subsubsection{Question 6.}
+\paragraph{Greedy Algorithm} 
+We consider establishing a greedy solution. As indicated in the question stem, for each $n$, we sort the $(p_{l,n}, r_{l,n})$ in the ascending order of $p_{l,n}$. We add one more convention $\forall n, p_{0,n} = 0, r_{0,n} = 0 $. Initially, we allocate to each channel no user, which means $(p_{0,n}, r_{0,n})$. Thus the initial utility is 0. 
+
+To increase the total utility, every loop, we choose one channel to allocate more power. The criteria is the $e_{l,n} = \dfrac{r_{l+1,n} - r_{l,n}}{p_{l+1,n} - p_{l,n}}$, which shows the average payoff we can get by increase $l$ to $l+1$. So each time we choose the channel with the largest $e_{l,n}$ and change its user from $l$ to $l+1$. The loop ends, when all channels have been allocated with the users with the largest power or $p \leq p_{current}$
+
+When $p < p_{current}$, the current allocation is not feasible. So we allocate to the last channel a linear combination of its last two allocation. We have 
+\begin{align}
+\sum_{k \ne n} p_{l_k,k} + p_{l-1,n} < p \\
+\sum_{k \ne n} p_{l_k,k} + p_{l,n} = p_{current} > p
+\end{align}
+We search for a $\epsilon$ that 
+\begin{align}
+\sum_{k \ne n} p_{l_k,k} + \epsilon p_{l-1,n} + (1-\epsilon) p_{l,n} = p
+\end{align}
+Combining (8) and (9), we get $\epsilon$
+$$ \epsilon = \dfrac{p_{current} - p}{p_{l,n} - p_{l-1,n}}$$
+
+\noindent\textsc{greedy-Algorithm-solution}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item $p_{current}$ = 0 
+\item \textbf{for} n = 1 to N
+\item \qquad $l[n] = 0$
+\item \textbf{while} $p_{current} < p$  
+\item \qquad  find the $n \in {1,...N}$ with the largest $e_{l[n]n} = \dfrac{r_{l[n]+1,n} - r_{l[n],n}}{p_{l[n]+1,n} - p_{l[n],n}}$ 
+\item \qquad  $p_{current} += p_{(l[n_{m}] + 1), n_{m}} - p_{l[n_{m}], n_{m}}$
+\item \qquad  l[$n$] += 1;
+\item \textbf{if} $p_{current} == p$
+\item \qquad \textbf{for} n = 1 to N
+\item \qquad \qquad $x_{l[n],n}$ = 1
+\item \textbf{else} 
+\item \qquad \textbf{for} n = 1 to N \textbf{not} $n_m$
+\item \qquad \qquad $x_{l[n],n}$ = 1
+\item \qquad $x_{l[n_m] - 1,n_m} = \epsilon := \dfrac{p_{current} - p}{p_{l[n_m],n_m} - p_{l[n_m]-1,n_m}}$
+\item \qquad $x_{l[n_m],n_m} = 1 - \epsilon$
+\item \textbf{return} $x$
+\end{enumerate}
+
+\paragraph{Time Complexity} Line 2 to 3 take $O(N)$. Considering the \textbf{while} loop from line 4 to line 7, every loop we have to check every channel to get the max payoff, so each loop takes $O(N)$. In the worst case, the final allocation could be $p_{L,n}, r_{L,n}$ for every n < $N$, and it takes $NL$ loops to get that. The line 8 to the end  takes constant time. So the complexity for the entire algorithm is $O(N^2L)$  
+
+TO DO: If we use a priority queue to store the $l[n]$. Every loop takes constant time. Then the complexity of the algorithm becomes $O(N L)$
+\end{document}
