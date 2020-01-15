@@ -156,4 +156,33 @@ $$ \epsilon = \dfrac{p_{current} - p}{p_{l,n} - p_{l-1,n}}$$
 \paragraph{Time Complexity} Line 2 to 3 take $O(N)$. Considering the \textbf{while} loop from line 4 to line 7, every loop we have to check every channel to get the max payoff, so each loop takes $O(N)$. In the worst case, the final allocation could be $p_{L,n}, r_{L,n}$ for every $n < N$, and it takes $NL$ loops to get that. The line 8 to the end  takes constant time. So the complexity for the entire algorithm is $O(N^2L)$  
 
 TO DO: If we use a priority queue to store the $l[n]$. Every loop takes constant time. Then the complexity of the algorithm becomes $O(N L)$
+
+\subsubsection{Question 7. }
+\textbf{ TO DO After coding}
+
+\subsubsection{Question 8. }
+\paragraph{DP Solution} To find a DP Solution of the whole problem, we consider first the subproblem: \textit{find the best utility we can get using only the first $n$ channels with total power limit $p'$ }. Let $DP_{n,p}$ be the matrix who stores these values. We have the relation below: 
+
+\begin{align*}
+&DP(0,p') = 0 \ \  \forall p'\in \{0...p\} \\
+&DP(n,0) = 0\ \ \forall n\in \{0...N\} \\
+&DP(n,p') =  \max_{l \in \{0,...,L\}} \{ DP(n-1, p'-p_{l,n}) + r_{l,n} \}
+\end{align*}
+
+By filling iteratively the matrix, we get the optimal allocation\\
+
+
+
+\noindent\textsc{DP-solution}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item DP = \textsc{Zeros}[N][p]
+\item \textbf{for} $n$ = 1 to N
+\item \qquad \textbf{for} $q$ = 1 to p
+\item \qquad \qquad \textbf{for} $l$ = 1 to L
+\item  \qquad \qquad \qquad DP[$n$][$q$] = \textsc{Max}(DP[$n$][$q$], DP[n][$q$ - $p_{l,n}$] + $r_{l,n}$)
+\item \textbf{return} $DP[N][P]$
+\end{enumerate}
+
 \end{document}
