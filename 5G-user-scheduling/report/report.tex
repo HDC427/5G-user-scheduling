@@ -161,7 +161,7 @@ TO DO: If we use a priority queue to store the $l[n]$. Every loop takes constant
 \textbf{ TO DO After coding}
 
 \subsubsection{Question 8. }
-\paragraph{DP Solution} To find a DP Solution of the whole problem, we consider first the subproblem: \textit{find the best utility we can get using only the first $n$ channels with total power limit $p'$ }. Let $DP_{n,p}$ be the matrix who stores these values. We have the relation below: 
+\paragraph{DP Solution} To find a DP Solution of the whole problem, we consider the subproblem: \textit{find the best utility we can get using only the first $n$ channels with total power limit $p'$ }. Let $DP_{n,p}$ be the matrix who stores these values. We have the relation below: 
 
 \begin{align*}
 &DP(0,p') = 0 \ \  \forall p'\in \{0...p\} \\
@@ -171,18 +171,115 @@ TO DO: If we use a priority queue to store the $l[n]$. Every loop takes constant
 
 By filling iteratively the matrix, we get the optimal allocation\\
 
+\noindent\textsc{DP-solution-Maximum-Utility}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item DP = \textsc{Zeros}[N][p]
+\item \textbf{for} $q$ = 1 to p
+\item \qquad \textbf{for} $n$ = 1 to N
+\item \qquad \qquad \textbf{for} $l$ = 1 to L
+\item  \qquad \qquad \qquad DP[$n$][$q$] = \textsc{Max}(DP[$n-1$][$q$], DP[n][$q$ - $p_{l,n}$] + $r_{l,n}$)
+\item \textbf{return} $DP[N][P]$
+\end{enumerate}
 
+But this algorithm only return the maximum utility but not the optimal allocation. We need a way to store the optimal allocation and we decide to use another matrix of dimension $(N,p)$ to store the optimal allocation for channel $n$ in the sub problem $(n,q)$
 
 \noindent\textsc{DP-solution}(n)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
 \item DP = \textsc{Zeros}[N][p]
-\item \textbf{for} $n$ = 1 to N
-\item \qquad \textbf{for} $q$ = 1 to p
+\item LastTask = \textsc{Zeros}[N][p]
+\item \textbf{for} $q$ = 1 to p
+\item \qquad \textbf{for} $n$ = 1 to N
 \item \qquad \qquad \textbf{for} $l$ = 1 to L
-\item  \qquad \qquad \qquad DP[$n$][$q$] = \textsc{Max}(DP[$n$][$q$], DP[n][$q$ - $p_{l,n}$] + $r_{l,n}$)
-\item \textbf{return} $DP[N][P]$
+\item \qquad \qquad \qquad $l_M = 0$
+\item \qquad \qquad \qquad \textbf{if} ( DP[n-1][$q$ - $p_{l,n}$] + $r_{l,n}$ ) $\geq$ DP[$n$][$q$]
+\item \qquad \qquad \qquad \qquad DP[$n$][$q$] = DP[n-1][$q$ - $p_{l,n}$] + $r_{l,n}$
+\item \qquad \qquad \qquad \qquad $l_M$ = $l$
+\item \qquad \qquad LastTask[$n$][$q$] = $l_M$
+\item $q$ = $p$
+\item \textbf{for} n = N to 1
+\item \qquad $l_M$ = LastTask[$n$][$q$]
+\item \qquad $x_{l_M, n} = 1$
+\item \qquad q -= $p_{l_M, n}$
+\item \textbf{return} $x$
+\end{enumerate}
+
+\paragraph{Time Complexity} The loop from line 3 to line 10 takes $O(NLp)$. The loop after line 12 takes $O(N)$. Thus the time complexity of the entire algorithm is $O(NLp)$
+\paragraph{Space Requirement} The matrices $DP$ and LastTask take $O(Np)$
+
+\subsubsection{Question 9. }
+\paragraph{DP Solution} Right now we consider the subproblem: \textit{find the minimum power we need to reach total utility r using only first n channels}. Here r ranges from $0$ to $U := \sum_{k = 1}^{n} r_{L,k}$. $U$ is the highest utility we can get from these n channels. Let $DP(n,r)$ be the matrix who stores these values. We have the relations below:
+
+\begin{align*}
+&DP(0,r) = \infty \ \  \forall r\in \{0...U\} \\
+&DP(n,r^{-}) = 0\ \ \forall n\in \{0...N\}\ \forall r^{-} \le 0 \\
+&DP(n,r) =  \min_{l \in \{0,...,L\}} \{ DP(n-1, r-r_{l,n}) + p_{l,n} \}
+\end{align*}
+By filling iteratively the matrix, we get the optimal allocation when $DP(N,r)$ reach $p$. If all values in $DP[N][:]$ are less than $p$, we can can reach the maximum utility $U$ by assigning the maximum power.\\
+
+\noindent\textsc{DP-solution}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item U = 0
+\item \textbf{for} n = 1 to N
+\item \qquad U += $r_{L,n}$
+\item DP = \textsc{Infty}[N][r]
+\item \textbf{for} n = 1 to N
+\item \qquad DP[n][0] = 0
+\item LastTask = \textsc{Zeros}[N][p]
+\item \textbf{for} $r$ = 1 to U
+\item \qquad \textbf{for} $n$ = 1 to N
+\item \qquad \qquad \textbf{for} $l$ = 1 to L
+\item \qquad \qquad \qquad $l_M = 0$
+\item \qquad \qquad \qquad \textbf{if} ( $r$ - $r_{l,n}$ ) $\geq$ 0 \textbf{and}  ( DP[n-1][$r$ - $r_{l,n}$] + $p_{l,n}$ ) $\leq$ DP[$n$][$r$]
+\item \qquad \qquad \qquad \qquad DP[$n$][$r$] = DP[n-1][$r$ - $r_{l,n}$] + $p_{l,n}$
+\item \qquad \qquad \qquad \qquad $l_M$ = $l$
+\item \qquad \qquad \qquad \textbf{elif} ( $r$ - $r_{l,n}$ ) $\leq$ 0 \textbf{and} $p_{l_n} \leq$ DP[$n$][$r$]
+\item \qquad \qquad \qquad \qquad DP[$n$][$r$] = $p_{l_n}$
+\item \qquad \qquad \qquad \qquad $l_M$ = $l$
+\item \qquad \qquad LastTask[$n$][$q$] = $l_M$
+\item \qquad \textbf{if} DP[$N$][$r$] $\textgreater$ p
+\item \qquad \qquad $r_M$ = $r-1$
+\item \qquad \qquad \textbf{break}
+\item $r = r_M$
+\item \textbf{for} n = N to 1
+\item \qquad $l_M$ = LastTask[$n$][$r_M$]
+\item \qquad $x_{l_M, n} = 1$
+\item \qquad $r$ -= $r_{l_M, n}$
+\item \qquad \textbf{if} $r$ $\leq$ 0
+\item \qquad \qquad \textbf{break}
+\item \textbf{return} $x$
+\end{enumerate}
+\subsubsection{Question 10. }
+\paragraph{Branch-and-Bound} We set each node as a subproblem defined as \textit{The highest utility we can get with the constraint : $[ l_{1}^{-} \leq l_1 \leq l_{1}^{+},...,l_{N}^{-}\leq l_N \leq l_{N}^{+})]$ }, where the tuple $( l_n^{-}, l_n^{+} )$ represents the lower an upper bound of each channel $n$. \\
+
+\noindent\textsc{BB-solution}(n)
+\begin{enumerate}[1\ ]
+\setlength{\topsep}{0.05ex}
+\setlength{\itemsep}{0.05ex}
+\item $r_{max}$ = 0;
+\item $Q$ = $deque()$;
+\item \textsc{Push}$(Q, [(1,L),...,(1,L)])$
+\item \textbf{while} $Q$ is not empty
+\item \qquad $[(l_1^{-},l_1^{+}),...,(1_N^{-},l_N^{+})]$ = \textsc{Pull}($Q$)
+\item \qquad \textbf{if} $\sum_{k=1}^{N} p_{l_{k}^{+}, k} \leq p$
+\item \qquad \qquad \textbf{if} $\sum_{k=1}^{N} r_{l_{k}^{+}, k} \geq r_{max}$
+\item \qquad \qquad \qquad $r_{max} = \sum_{k=1}^{N} r_{l_{k}^{+}, k}$
+\item \qquad \qquad \qquad $A_{best} = [l_1^{+},..., l_N^{+}]$
+\item \qquad \qquad \qquad \textbf{break}
+\item \qquad \textbf{for} k = 1 to n
+\item \qquad \qquad \textbf{if} $l_k^{-} \leq l_k^{+} - 1$
+\item \qquad \qquad \qquad \textbf{break}
+\item \qquad $mid = floor(\dfrac{l_k^{-} + l_k^{+}}{2})$
+\item \qquad \textsc{Push}( $Q$, $[(l_1^{-},l_1^{+}),...,(l_1^{-},mid),...,(1_N^{-},l_N^{+})]$
+\item \qquad \textsc{Push}( $Q$, $[(l_1^{-},l_1^{+}),...,(mid+1,l_k^{+}),...,(1_N^{-},l_N^{+})]$
+\item \textbf{for} n = 1 to N
+\item \qquad $x_{A_{best}[n],n} = 1$
+\item \textbf{return} $x$
 \end{enumerate}
 
 \end{document}

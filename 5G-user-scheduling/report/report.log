@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.8.2)  16 JAN 2020 00:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.8.2)  19 JAN 2020 13:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -203,12 +203,36 @@ Underfull \hbox (badness 10000) in paragraph at lines 172--173
 
  []
 
-[5] [6] (./report.aux) ) 
+[5] [6]
+Underfull \hbox (badness 10000) in paragraph at lines 220--222
+
+ []
+
+
+LaTeX Warning: Command \textgreater invalid in math mode on input line 245.
+
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 245.
+
+(c:/texlive/2019/texmf-dist/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 245.
+
+
+LaTeX Warning: Command \textgreater invalid in math mode on input line 245.
+
+[7]
+Underfull \hbox (badness 10000) in paragraph at lines 258--259
+
+ []
+
+[8] [9] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 1729 strings out of 492609
- 21603 string characters out of 6132819
+ 1745 strings out of 492609
+ 21877 string characters out of 6132819
  94967 words of memory out of 5000000
- 5658 multiletter control sequences out of 15000+600000
+ 5671 multiletter control sequences out of 15000+600000
  9737 words of font info for 38 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  27i,10n,27p,477b,195s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -219,14 +243,15 @@ Here is how much of TeX's memory you used:
 /2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2019/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2019/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr8.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmsy10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-sy6.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c
-:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on report.pdf (6 pages, 147253 bytes).
+ublic/amsfonts/cm/cmr6.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr8.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
+10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:
+/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2
+019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+Output written on report.pdf (9 pages, 167405 bytes).
 PDF statistics:
- 71 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 86 PDF objects out of 1000 (max. 8388607)
+ 61 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
