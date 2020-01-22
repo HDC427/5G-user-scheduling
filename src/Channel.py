@@ -4,18 +4,21 @@ import matplotlib.pyplot as plt
 
 class Channel:
     
-    __N = 0
-    __M = 0
-    __K = 0
-    __p = 0
-    __size = 0
+#    __N = 0
+#    __M = 0
+#    __K = 0
+#    __p = 0
     
     def __init__(self, p, r):
-        
+        '''input p and r are K*M matrices'''
         self.__originalData = np.array([p, r])
         
         self.p = p.flatten()
         self.r = r.flatten()
+        
+        #keep track of the current number of p and r, may change 
+        #after preprocessing
+        self.__size = self.__M * self.__K
         
         #keep track of the k, m index in __originalData
         self.L = np.argsort(self.p)
@@ -24,10 +27,16 @@ class Channel:
         self.p = self.p[self.L]
         self.r = self.r[self.L]
         
-        #the solution
-        self.x = np.zeros_like(self.__size, dtype=np.int)
+        #sum(x*p) is the power allocated
+        #sum(x*r) is the rate obtained
+        self.x = np.zeros(self.__size, dtype=np.int)
         
-    def delete(self, i):
+        #by referring to channel.k_m, we can know which
+        #power for this channel is chosen. -1 indicates the 
+        #channel's power is not yet decided
+        self.k_m = (-1, -1)
+        
+    def __delete(self, i):
         
         self.L = np.delete(self.L, i)
         self.p = np.delete(self.p, i)
@@ -44,7 +53,8 @@ class Channel:
                 if self.p[i] == self.p[i-1]:
                     dominated.append(i-1)
             else: dominated.append(i)
-        self.delete(dominated)
+        self.__delete(dominated)
+        self.x = np.zeros(self.__size, dtype=np.int)
             
     def preprocess_LP(self):
         
@@ -64,6 +74,9 @@ class Channel:
         self.L = self.L[S]
         self.p = self.p[S]
         self.r = self.r[S]
+        
+        self.__size = len(S)
+        self.x = np.zeros(self.__size, dtype=np.int)
 
     @classmethod
     def read_testfile(cls, x):
@@ -73,8 +86,8 @@ class Channel:
         cls.__N = int(eval(f.readline()))
         cls.__M = int(eval(f.readline()))
         cls.__K = int(eval(f.readline()))
-        cls.__p = int(eval(f.readline()))
-        cls.__size = cls.__M * cls.__K
+        cls.P = int(eval(f.readline()))
+        
         
         pr_data = np.loadtxt(f, dtype=np.int)
         
@@ -89,5 +102,26 @@ class Channel:
     def display(self):
         plt.plot(self.p, self.r)
         
+    def reset(self):
+       self.x = np.zeros(self.__size, dtype=np.int)
+       self.k_m = (-1, -1)
+        
+    def to_k_m(self, l):
+        #if we choose channel.p[l], we can use this formula to
+        #retrieve its k m index in the original data
+        self.k_m = (l//self.__K, l%self.__K)
         
         
+    def N(cls):
+        return cls.__N
+    
+    def M(cls):
+        return cls.__M
+    
+    def K(cls):
+        return cls.__K
+    
+    def size(self):
+        return self.__size
+        
+    
