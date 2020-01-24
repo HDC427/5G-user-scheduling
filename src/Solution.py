@@ -2,7 +2,6 @@
 
 from Channel import Channel
 import numpy as np
-import time
 
 class Solution:
     
@@ -73,6 +72,44 @@ class Solution:
                     cls.__channels[i].x[l[i]-1] = epsilon
                     cls.__channels[i].x[l[i]] = 1 - epsilon
                     
+    def DP_solution(cls):
+        
+        P = Channel.P
+        
+        #We define Pr(i,q) the problem of maximizing the total utility
+        #with the first i channels and power budget q
+        
+        #dp[i,q] stores the solution to Pr(i,q) 
+        dp = np.zeros((cls.__len+1, P+1), dtype=np.int)
+        
+        #LastTask[i,q]=l means to solve Pr(i,q), the ith channel should
+        #be allocated p_{l,i}
+        LastTask = np.zeros((cls.__len+1, P+1), dtype=np.int)
+        
+        for q in range(1, P+1):
+            for i in range(1, cls.__len+1):
+                l_m = -1
+                dp[i,q] = dp[i-1,q]
+                
+                L = cls.__channels[i-1].size()
+                for l in range(L):
+                    if q - cls.__channels[i-1].p[l] >= 0:
+                        temp = dp[i-1, q - cls.__channels[i-1].p[l]] + cls.__channels[i-1].r[l]
+                        if temp >= dp[i,q]:
+                            dp[i,q] = temp 
+                            l_m = l
+                LastTask[i,q] = l_m
+                
+        q = P
+        for i in range(cls.__len,0, -1):
+            l = LastTask[i,q]
+            if l == -1:
+                continue;
+            cls.__channels[i-1].x[l] = 1
+            q -= cls.__channels[i-1].p[l]
+            if q <= 0:
+                break
+    
     def BB_solution(cls):
         
         P = Channel.P
