@@ -19,6 +19,7 @@ class Solution:
         for i in range(cls.__len):
             print("channel %d: "%(i+1) , cls.__channels[i].x)
             print(cls.__channels[i].p)
+            print(cls.__channels[i].r)
             p += sum(cls.__channels[i].x*cls.__channels[i].p)
             r += sum(cls.__channels[i].x*cls.__channels[i].r)
         print("total power: ", p , "; total utility: ", r)
@@ -109,6 +110,62 @@ class Solution:
             q -= cls.__channels[i-1].p[l]
             if q <= 0:
                 break
+    
+    def DP_solution_2(cls):
+        
+        P = Channel.P
+        
+        U = 0
+        for i in range(cls.__len):
+            U += cls.__channels[i].r[-1]
+        
+        #We define pr(i,q) the problem of minimizing the total power
+        #with the first i channels to achieve a utility of q
+        
+        #dp[i,q] stores the solution to pr(i,q)
+        dp = np.array( [(U+1)*[np.infty] for i in range(cls.__len+1)] )
+        
+        #LastTask[i,q]=l means to solve pr(i,q), the ith channel should
+        #be allocated p_{l,i}
+        LastTask = np.zeros((cls.__len+1, U+1), dtype=np.int)
+        
+        for i in range(cls.__len):
+            dp[i,0] = 0;
+        
+        r_m = U
+        for q in range(1,U+1):
+            for i in range(1,cls.__len+1):
+                l_m = -1
+                dp[i,q] = dp[i-1,q]
+                L = cls.__channels[i-1].size()
+                for l in range(L):
+                    if q - cls.__channels[i-1].r[l] >= 0:
+                        temp = dp[i-1, q - cls.__channels[i-1].r[l]] + cls.__channels[i-1].p[l]
+                        if temp <= dp[i,q]:
+                            dp[i,q] = temp 
+                            l_m = l
+                    elif cls.__channels[i-1].p[l] <= dp[i,q]:
+                        dp[i,q] = cls.__channels[i-1].p[l]
+                        l_m = l
+                LastTask[i,q] = l_m
+            
+            #If solving pr(N,q) surpasses already the budget,
+            #no need to go further, and so the feasible 
+            #maximun utitily is q-1
+            if dp[cls.__len, q] > P:
+                r_m = q - 1
+                break;
+    
+        q = r_m 
+        for i in range(cls.__len,0, -1):
+            l = LastTask[i,q]
+            if l == -1:
+                continue;
+            cls.__channels[i-1].x[l] = 1
+            q -= cls.__channels[i-1].r[l]
+            print(q)
+            if q <= 0:
+                break;
     
     def BB_solution(cls):
         
