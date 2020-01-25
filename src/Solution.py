@@ -182,6 +182,7 @@ class Solution:
 #            print(l, p_c)
 #            
 #            
+            print(len(Q))
 #            time.sleep(1)
             if sum(cls.__channels[i].p[l[i]] for i in range(cls.__len)) <= P:
                 if sum(cls.__channels[i].r[l[i]] for i in range(cls.__len)) > r_max:
