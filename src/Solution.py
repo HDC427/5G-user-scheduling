@@ -173,16 +173,20 @@ class Solution:
         
         r_max = 0
         chosen = []
-        Q = [[cls.__channels[i].size()-1 for i in range(cls.__len)]]
+        
+        root = [cls.__channels[i].size()-1 for i in range(cls.__len)]
+        root.append(cls.__len)
+        Q = [root]
         
         while Q:
+            print(Q)
             l = Q.pop(0)
             #l[i] is the upper bound for the index of channel[i].p
 #            p_c = sum(cls.__channels[i].p[l[i]] for i in range(cls.__len))
 #            print(l, p_c)
 #            
 #            
-            print(len(Q))
+            
 #            time.sleep(1)
             if sum(cls.__channels[i].p[l[i]] for i in range(cls.__len)) <= P:
                 if sum(cls.__channels[i].r[l[i]] for i in range(cls.__len)) > r_max:
@@ -195,10 +199,11 @@ class Solution:
             
             #we add a new node to Q as long as one upper bound can be decreased
             #if no upper bounds can be decreased, this is cas (3) and no subnode of l is added
-            for i in range(cls.__len):
+            for i in range(l[-1]):
                 if l[i] > 0:
                     l_new = l.copy()
                     l_new[i] -= 1
+                    l_new[-1] = i+1
                     Q.append(l_new)
                     
         if chosen:
