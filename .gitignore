@@ -7,4 +7,4 @@
 *.tex.bak
 
 #python
-__pycahche__
+src/__pycahche__
