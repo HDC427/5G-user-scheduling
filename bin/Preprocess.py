@@ -7,17 +7,15 @@ if '../' not in sys.path:
 from Channel import Channel
 from Solution import Solution
 
-channel = Channel.read_testfile(5)
+channel = Channel.read_testfile(3)
 
-channel[1].display()
-channel[1].preprocess_IP()
-channel[1].display()
-channel[1].preprocess_LP()
-channel[1].display()
+for i in range(Channel.N(Channel)):
+    channel[i].preprocess_IP()
+    channel[i].preprocess_LP()
 
 S = Solution(channel)
 
-S.greedy_solution()
+S.BB_solution()
 S.show_answer()
 
 
