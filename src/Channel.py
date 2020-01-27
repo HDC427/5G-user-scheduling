@@ -36,6 +36,9 @@ class Channel:
         #channel's power is not yet decided
         self.k_m = (-1, -1)
         
+        plt.xlabel('power')
+        plt.ylabel('rate')
+        
     def __delete(self, i):
         
         self.L = np.delete(self.L, i)
@@ -88,7 +91,6 @@ class Channel:
         cls.__K = int(eval(f.readline()))
         cls.P = int(eval(f.readline()))
         
-        
         pr_data = np.loadtxt(f, dtype=np.int)
         
         channel = []
@@ -99,8 +101,9 @@ class Channel:
         
         return channel
     
-    def display(self):
-        plt.plot(self.p, self.r)
+    def display(self, lab='label'):
+        plt.plot(self.p, self.r, label=lab)
+        plt.legend()
         
     def reset(self):
        self.x = np.zeros(self.__size, dtype=np.int)
