@@ -8,3 +8,7 @@
 
 #python
 src/__pycahche__
+
+#other
+*.png
+*.jpg
