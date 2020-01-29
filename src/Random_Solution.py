@@ -18,8 +18,8 @@ class Online_Solution:
         self.p_max = 50
         self.r_max = 100
         self.p = 100;
-        self.powers = np.random.randint(1, self.p_max + 1, (self.K, self.N * self.M))
-        self.rates = np.random.randint(1, self.r_max + 1, (self.K, self.N * self.M))
+        self.powers = np.random.randint(1, self.p_max + 1, (self.K, self.N, self.M))
+        self.rates = np.random.randint(1, self.r_max + 1, (self.K, self.N, self.M))
 
     def onlineScheduling(self, seuil):
         res = [];
@@ -28,16 +28,17 @@ class Online_Solution:
         total_utility = 0;
         total_power = 0;
         for k in range(self.K):
-            power_k = self.powers[k]
-            rate_k = self.rates[k];
+            power_k = self.powers[k].flatten()
+            rate_k = self.rates[k].flatten();
             payoff = rate_k
             payoff_sorted = np.sort(payoff)
 
             max_payoff = 0
             for i in range(self.M * self.N - 1, -1, -1):
                 max_payoff = payoff_sorted[i]
+                #TODO
                 max_index = np.where(payoff == max_payoff)[0][0]
-                if total_power + self.powers[k, max_index] <= self.p:
+                if total_power + power_k[max_index] <= self.p:
                     break
 
             if max_payoff >= seuil:
@@ -48,8 +49,8 @@ class Online_Solution:
                     channel_used.append(max_channel)
                     res.append([max_channel, max_m])
 
-                    total_utility += self.rates[k, max_index]
-                    total_power += self.powers[k, max_index]
+                    total_utility += rate_k[max_index]
+                    total_power += power_k[max_index]
                 else:
                     res.append([-1, -1])
             else:
