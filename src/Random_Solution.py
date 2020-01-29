@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import numpy as np
-=======
-import numpy
->>>>>>> master
 import matplotlib.pyplot as plt
 
 from bokeh.io import show, output_notebook
