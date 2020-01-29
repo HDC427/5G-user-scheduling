@@ -6,7 +6,7 @@
 \usepackage{mathrsfs}
 \usepackage{enumerate}
 \usepackage{amsmath,amsfonts,amssymb,dsfont}
-\usepackage{graphicx} 
+\usepackage{graphicx}
 
 
 
@@ -115,52 +115,52 @@ Note that the ponits in S form a convex curve, so that by $L$(A[i],S[0]) $<$ $L$
 
 \subsubsection{Question 5.}
 
-We presents the instances of 5 test files by the following 5 figures. The abscissa represents the powers and the ordinate represents the utility we get. 
+We presents the instances of 5 test files by the following 5 figures. The abscissa represents the powers and the ordinate represents the utility we get.
 
 \begin{figure}[htbp]
 \centering
 \begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=6cm]{q5.pdf}
-\caption{test file 1}
+\includegraphics[width=6cm]{channel0.png}
+\caption{channel 1}
 \end{minipage}
 \begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=6cm]{q5.pdf}
-\caption{test file 2}
-\end{minipage}
-\centering
-\begin{minipage}[t]{0.48\textwidth}
-\centering
-\includegraphics[width=6cm]{q5.pdf}
-\caption{test file 3}
-\end{minipage}
-\begin{minipage}[t]{0.48\textwidth}
-\centering
-\includegraphics[width=6cm]{q5.pdf}
-\caption{test file 4}
+\includegraphics[width=6cm]{channel1.png}
+\caption{channel 2}
 \end{minipage}
 \centering
 \begin{minipage}[t]{0.48\textwidth}
 \centering
-\includegraphics[width=6cm]{q5.pdf}
-\caption{test file 5}
+\includegraphics[width=6cm]{channel2.png}
+\caption{channel 3}
+\end{minipage}
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=6cm]{channel3.png}
+\caption{channel 4}
+\end{minipage}
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=6cm]{channel4.png}
+\caption{channel 5}
 \end{minipage}
 \end{figure}
 
 
 \subsubsection{Question 6.}
-\paragraph{Greedy Algorithm} 
-We consider establishing a greedy solution. As indicated in the question stem, for each $n$, we sort the $(p_{l,n}, r_{l,n})$ in the ascending order of $p_{l,n}$. We add one more convention $\forall n, p_{0,n} = 0, r_{0,n} = 0 $. Initially, we allocate to each channel no user, which means $(p_{0,n}, r_{0,n})$. Thus the initial utility is 0. 
+\paragraph{Greedy Algorithm}
+We consider establishing a greedy solution. As indicated in the question stem, for each $n$, we sort the $(p_{l,n}, r_{l,n})$ in the ascending order of $p_{l,n}$. We add one more convention $\forall n, p_{0,n} = 0, r_{0,n} = 0 $. Initially, we allocate to each channel no user, which means $(p_{0,n}, r_{0,n})$. Thus the initial utility is 0.
 
 To increase the total utility, every loop, we choose one channel to allocate more power. The criteria is the $e_{l,n} = \dfrac{r_{l+1,n} - r_{l,n}}{p_{l+1,n} - p_{l,n}}$, which shows the average payoff we can get by increase $l$ to $l+1$. So each time we choose the channel with the largest $e_{l,n}$ and change its user from $l$ to $l+1$. The loop ends, when all channels have been allocated with the users with the largest power or $p \leq p_{current}$
 
-When $p < p_{current}$, the current allocation is not feasible. So we allocate to the last channel a linear combination of its last two allocation. We have 
+When $p < p_{current}$, the current allocation is not feasible. So we allocate to the last channel a linear combination of its last two allocation. We have
 \begin{align}
 \sum_{k \ne n} p_{l_k,k} + p_{l-1,n} < p \\
 \sum_{k \ne n} p_{l_k,k} + p_{l,n} = p_{current} > p
 \end{align}
-We search for a $\epsilon$ that 
+We search for a $\epsilon$ that
 \begin{align}
 \sum_{k \ne n} p_{l_k,k} + \epsilon p_{l-1,n} + (1-\epsilon) p_{l,n} = p
 \end{align}
@@ -171,18 +171,18 @@ $$ \epsilon = \dfrac{p_{current} - p}{p_{l,n} - p_{l-1,n}}$$
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
-\item $p_{current}$ = 0 
+\item $p_{current}$ = 0
 \item \textbf{for} n = 1 to N
 \item \qquad $l[n] = 0$
-\item \textbf{while} $p_{current} < p$  
-\item \qquad  find the $n \in {1,...N}$ with the largest $e_{l[n]n} = \dfrac{r_{l[n]+1,n} - r_{l[n],n}}{p_{l[n]+1,n} - p_{l[n],n}}$ 
+\item \textbf{while} $p_{current} < p$
+\item \qquad  find the $n \in {1,...N}$ with the largest $e_{l[n]n} = \dfrac{r_{l[n]+1,n} - r_{l[n],n}}{p_{l[n]+1,n} - p_{l[n],n}}$
 \item \qquad  $p_{current} += p_{(l[n_{m}] + 1), n_{m}} - p_{l[n_{m}], n_{m}}$
 \item \qquad  l[$n$] += 1;
 \item \qquad $n_m = n$
 \item \textbf{if} $p_{current} == p$
 \item \qquad \textbf{for} n = 1 to N
 \item \qquad \qquad $x_{l[n],n}$ = 1
-\item \textbf{else} 
+\item \textbf{else}
 \item \qquad \textbf{for} n = 1 to N \textbf{not} $n_m$
 \item \qquad \qquad $x_{l[n],n}$ = 1
 \item \qquad $x_{l[n_m] - 1,n_m} = \epsilon := \dfrac{p_{current} - p}{p_{l[n_m],n_m} - p_{l[n_m]-1,n_m}}$
@@ -190,12 +190,12 @@ $$ \epsilon = \dfrac{p_{current} - p}{p_{l,n} - p_{l-1,n}}$$
 \item \textbf{return} $x$
 \end{enumerate}
 
-\paragraph{Time Complexity} Line 2 to 3 take $O(N)$. Considering the \textbf{while} loop from line 4 to line 7, every loop we have to check every channel to get the max payoff, so each loop takes $O(N)$. In the worst case, the final allocation could be $p_{L,n}, r_{L,n}$ for every $n < N$, and it takes $NL$ loops to get that. The line 8 to the end  takes constant time. So the complexity for the entire algorithm is $O(N^2L)$  
+\paragraph{Time Complexity} Line 2 to 3 take $O(N)$. Considering the \textbf{while} loop from line 4 to line 7, every loop we have to check every channel to get the max payoff, so each loop takes $O(N)$. In the worst case, the final allocation could be $p_{L,n}, r_{L,n}$ for every $n < N$, and it takes $NL$ loops to get that. The line 8 to the end  takes constant time. So the complexity for the entire algorithm is $O(N^2L)$
 
 TO DO: If we use a priority queue to store the $l[n]$. Every loop takes constant time. Then the complexity of the algorithm becomes $O(N L)$
 
 \subsubsection{Question 7. }
-The result of the Greedy Solution and LP Solution is presented in the table below 
+The result of the Greedy Solution and LP Solution is presented in the table below
 
 \begin{table}[!htbp]
 \centering
@@ -214,7 +214,7 @@ file & Optimal Rate by Greedy Solution & Optimal Rate by LP Solution  \\
 5 & 1533 & 1655\\
 \hline
 \end{tabular}
-\caption{Comparison between Two Solutions} 
+\caption{Comparison between Two Solutions}
 \end{table}
 
 We observe that the greedy solution is not the optimal solution;
@@ -232,11 +232,11 @@ file & CPU Time of Greedy Solution (ms)  \\
 5 & 12.96\\
 \hline
 \end{tabular}
-\caption{CPU run time} 
+\caption{CPU run time}
 \end{table}
 
 \subsubsection{Question 8. }
-\paragraph{DP Solution} To find a DP Solution of the whole problem, we consider the subproblem: \textit{find the best utility we can get using only the first $n$ channels with total power limit $p'$ }. Let $DP_{n,p}$ be the matrix who stores these values. We have the relation below: 
+\paragraph{DP Solution} To find a DP Solution of the whole problem, we consider the subproblem: \textit{find the best utility we can get using only the first $n$ channels with total power limit $p'$ }. Let $DP_{n,p}$ be the matrix who stores these values. We have the relation below:
 
 \begin{align*}
 &DP(0,p') = 0 \ \  \forall p'\in \{0...p\} \\
@@ -360,7 +360,7 @@ By filling iteratively the matrix, we get the optimal allocation when $DP(N,r)$ 
 
 \subsubsection{Question 11. }
 
-The result of DP Solution and BB Solution are presented in the tables below. 
+The result of DP Solution and BB Solution are presented in the tables below.
 
 \begin{table}[!htbp]
 \centering
@@ -379,7 +379,7 @@ file & ( Optimal Rate / power ) by DP Solution - 1 & DP Solution -2 &   BB Solut
 5 & 1655 / 1000 & 1655 / 1000 & \\
 \hline
 \end{tabular}
-\caption{Comparison between Two Solutions} 
+\caption{Comparison between Two Solutions}
 \end{table}
 
 \begin{table}[!htbp]
@@ -393,7 +393,7 @@ file & ( CPU Time ) DP Solution - 1 (ms) & DP Solution - 2 (ms) & BB Solution (m
 5 & 480.71 & 1231.72 &\\
 \hline
 \end{tabular}
-\caption{CPU run time} 
+\caption{CPU run time}
 \end{table}
 
 \subsubsection{Question 12. }
@@ -412,7 +412,7 @@ We should always keep an eye on the power we use. If the maximum \textit{payoff}
 \item totalRate = 0
 \item totalPower = 0
 \item \textbf{for} k = 1 to K:
-\item \qquad payoffMax = 0 
+\item \qquad payoffMax = 0
 \item \qquad \textbf{for} n = 1 to N, m = 1 to M:
 \item \qquad \qquad payoff$[n, m]$ = \textsc{Payoff}($r$,$p$)
 \item \qquad payoffSorted = \textsc{Sort}(\textsc{Flatten}(payoff))
@@ -424,7 +424,7 @@ We should always keep an eye on the power we use. If the maximum \textit{payoff}
 \item \qquad \qquad \qquad \textbf{break}
 \item \qquad \textbf{if} payoffMax $\geq$ threshold:
 \item \qquad \qquad \textbf{if} n \textbf{not} \textbf{in} channelUsed:
-\item \qquad \qquad \qquad \textsc{Push}(channelUsed, n) 
+\item \qquad \qquad \qquad \textsc{Push}(channelUsed, n)
 \item \qquad \qquad \qquad \textsc{Push}(res, [m,n])
 \item \qquad \qquad \textbf{else}
 \item \qquad \qquad \qquad \textsc{Push}(res, [-1,-1])   \textit{$\#$ user rejected}
