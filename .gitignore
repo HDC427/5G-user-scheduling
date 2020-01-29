@@ -5,6 +5,10 @@
 *.log
 *.synctex.gz
 *.tex.bak
+*.png
+*.jpg
+*.csv
 
 #python
-__pycahche__
+src/__pycache__
+
