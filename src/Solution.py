@@ -20,11 +20,13 @@ class Solution:
         
     def get_answer(cls, LP=False):
         
+        cls.p = 0
+        cls.r = 0
+        
         if LP:
             for i in range(cls.__len):
                 cls.p += sum(cls.__channels[i].p*cls.__channels[i].x)
-                cls.r += sum(cls.__channels[i].r*cls.__channels[i].x)   
-            
+                cls.r += sum(cls.__channels[i].r*cls.__channels[i].x)
         else:
             for i in range(cls.__len):
                 cls.p += cls.__channels[i].power

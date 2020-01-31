@@ -41,9 +41,6 @@ class Channel:
         self.power = 0
         self.rate = 0
         
-        plt.xlabel('power')
-        plt.ylabel('rate')
-        
     def __delete(self, i):
         
         self.L = np.delete(self.L, i)
@@ -117,6 +114,8 @@ class Channel:
         return channel
     
     def display(self, lab='label'):
+        plt.xlabel('power')
+        plt.ylabel('rate')
         plt.plot(self.p, self.r, label=lab)
         plt.legend()
         
