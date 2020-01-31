@@ -28,6 +28,7 @@ class Channel:
         self.p = self.p[self.L]
         self.r = self.r[self.L]
         
+        #used only in LP problems
         #sum(x*p) is the power allocated
         #sum(x*r) is the rate obtained
         self.x = np.zeros(self.__size, dtype=np.int)
@@ -35,7 +36,10 @@ class Channel:
         #by referring to channel.k_m, we can know which
         #power for this channel is chosen. -1 indicates the 
         #channel's power is not yet decided
-        self.k_m = (-1, -1)
+        self.k = -1
+        self.m = -1
+        self.power = 0
+        self.rate = 0
         
         plt.xlabel('power')
         plt.ylabel('rate')
@@ -117,13 +121,13 @@ class Channel:
         plt.legend()
         
     def reset(self):
-       self.x = np.zeros(self.__size, dtype=np.int)
-       self.k_m = (-1, -1)
+        self.x = np.zeros(self.__size, dtype=np.int)
+        self.k, self.m, self.power, self.rate = -1, -1, 0, 0
         
     def to_k_m(self, l):
         #if we choose channel.p[l], we can use this formula to
         #retrieve its k m index in the original data
-        self.k_m = (l//self.K, l%self.K)
+        self.k, self.m = l//self.K+1, l%self.K+1
     
     def size(self):
         return self.__size

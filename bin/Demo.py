@@ -9,13 +9,7 @@ import matplotlib.pyplot as plt
 from Channel import Channel
 from Solution import Solution
 
-channel = Channel.read_testfile(4)
-
-S = Solution(channel)
-
-S.DP_solution()
-S.get_answer()
-S.show_answer()
+channel = Channel.read_testfile(3)
 
 for i in range(Channel.N):
     #channel[i].display('original')
@@ -26,9 +20,9 @@ for i in range(Channel.N):
 
 S = Solution(channel)
 
-S.DP_solution()
-S.get_answer()
-S.show_answer()
+S.greedy_solution()
+S.get_answer(True)
+S.show_answer(True)
 
 
 
