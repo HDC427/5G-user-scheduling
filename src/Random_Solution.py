@@ -1,5 +1,9 @@
+import time
 import numpy as np
 import matplotlib.pyplot as plt
+
+from Channel import Channel
+from Solution import Solution
 
 from bokeh.io import show, output_notebook
 from bokeh.plotting import figure
@@ -30,13 +34,12 @@ class Online_Solution:
         for k in range(self.K):
             power_k = self.powers[k].flatten()
             rate_k = self.rates[k].flatten();
-            payoff = rate_k
+            payoff = rate_k + rate_k / power_k / 10
             payoff_sorted = np.sort(payoff)
 
             max_payoff = 0
             for i in range(self.M * self.N - 1, -1, -1):
                 max_payoff = payoff_sorted[i]
-                #TODO
                 max_index = np.where(payoff == max_payoff)[0][0]
                 if total_power + power_k[max_index] <= self.p:
                     break
@@ -60,30 +63,59 @@ class Online_Solution:
         # print("total power: ", total_power)
         # print(res)
         return res, total_utility, total_power
-
+            
 
 def statisticalAnalyse(lower_bound, upper_bound, n):
-    max_utility = []
+    max_utility_online = []
+    max_power_online = []
+    max_utility_real = []
+    max_power_real = []
+    best_threshold = []
+    
     for _ in range(n):
         os = Online_Solution()
         utility_serie = []
+        power_serie = []
         for i in np.arange(lower_bound, upper_bound, 1):
             t = os.onlineScheduling(i)
             utility_serie.append(t[1])
-        max_utility.append(max(utility_serie))
+            power_serie.append(t[2])
+        max_utility_online.append(max(utility_serie))
+        max_power_online.append(max(power_serie))
+        best_threshold.append(np.argmax(utility_serie) + lower_bound)
+        
+        channel = []
+        for i in range(os.N):
+            channel.append(Channel(Channel, os.N, os.M, os.K, os.p, \
+                                    os.powers[:,i,:], \
+                                    os.rates[:,i,:]))    
+        
+        for i in range(Channel.N):
+            channel[i].preprocess_simple()
+            channel[i].preprocess_IP()
+            channel[i].preprocess_LP()
+        
+        S = Solution(channel)
+        S.BB_solution()
+        p, r = S.get_answer()
+        
+        max_utility_real.append(r)
+        max_power_real.append(p)
+        
+    print("average best threshold: ", np.mean(best_threshold))
+    
+    plt.plot(range(n), max_utility_online)
+    plt.plot(range(n), max_utility_real)
+    print(max_power_online)
+    print(max_power_real)
+    print(max_utility_online)
+    print(max_utility_real)
 
-    fig = figure(title='max Utility', width=490, height=300, background_fill_color="#fafafa")
-    hist, edges = np.histogram(max_utility, bins=20)
-    fig.quad(top=hist, bottom=0, left=edges[:-1], right=edges[1:],
-             fill_color="navy", line_color="white", alpha=0.5, legend="simulation")
-    fig.yaxis.axis_label = 'count'
-    fig.xaxis.axis_label = 'max Utility'
-    fig.grid.grid_line_color = "white"
 
-    plt.hist(max_utility)
-    plt.show()
-    print("average max utility: ", sum(max_utility)/n)
-    return fig
+statisticalAnalyse(50, 100, 10)
 
+    
+    
+    
+    
 
-show(statisticalAnalyse(50, 100, 1000))

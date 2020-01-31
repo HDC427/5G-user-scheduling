@@ -167,7 +167,7 @@ We search for a $\epsilon$ that
 Combining (8) and (9), we get $\epsilon$
 $$ \epsilon = \dfrac{p_{current} - p}{p_{l,n} - p_{l-1,n}}$$
 
-\noindent\textsc{greedy-Algorithm-solution}(n)
+\noindent\textsc{greedy-Algorithm-solution}(p,r,N,M,K)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
@@ -246,7 +246,7 @@ file & CPU Time of Greedy Solution (ms)  \\
 
 By filling iteratively the matrix, we get the optimal allocation\\
 
-\noindent\textsc{DP-solution-Maximum-Utility}(n)
+\noindent\textsc{DP-solution-Maximum-Utility}(p,r,N,M,K)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
@@ -261,7 +261,7 @@ By filling iteratively the matrix, we get the optimal allocation\\
 
 But this algorithm only return the maximum utility but not the optimal allocation. We need a way to store the optimal allocation and we decide to use another matrix of dimension $(N,p)$ to store the optimal allocation for channel $n$ in the sub problem $(n,q)$
 
-\noindent\textsc{DP-solution}(n)
+\noindent\textsc{DP-solution}(p,r,N,M,K)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
@@ -296,7 +296,7 @@ But this algorithm only return the maximum utility but not the optimal allocatio
 \end{align*}
 By filling iteratively the matrix, we get the optimal allocation when $DP(N,r)$ reach $p$. If all values in $DP[N][:]$ are less than $p$, we can can reach the maximum utility $U$ by assigning the maximum power.\\
 
-\noindent\textsc{DP-solution}(n)
+\noindent\textsc{DP-solution}(p,r,N,M,K)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
@@ -333,7 +333,7 @@ By filling iteratively the matrix, we get the optimal allocation when $DP(N,r)$ 
 \subsubsection{Question 10. }
 \paragraph{Branch-and-Bound} We set each node as a subproblem defined as \textit{The highest utility we can get with the constraint : $[ l_{1}^{-} \leq l_1 \leq l_{1}^{+},...,l_{N}^{-}\leq l_N \leq l_{N}^{+})]$ }, where the tuple $( l_n^{-}, l_n^{+} )$ represents the lower an upper bound of each channel $n$. \\
 
-\noindent\textsc{BB-solution}(n)
+\noindent\textsc{BB-solution}(p,r,N,M,K)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
@@ -368,11 +368,11 @@ The result of DP Solution and BB Solution are presented in the tables below.
 \hline
 file & ( Optimal Rate / power ) by DP Solution - 1 & DP Solution -2 &   BB Solution \\
 \hline
-1 & 365 / 78  & 365 / 78 & \\
+1 & 365 / 78  & 365 / 78 & 365 / 78 \\
 \hline
-2 & 0 / 0 & 0 / 0 & \\
+2 & 0 / 0 & 0 / 0 & 0 / 0\\
 \hline
-3 & 350 / 68 & 350 / 68 & \\
+3 & 350 / 68 & 350 / 68 & 350 / 68 \\
 \hline
 4 & 9970 / 16000 & 9970 / 15999 & \\
 \hline
@@ -388,9 +388,9 @@ file & ( Optimal Rate / power ) by DP Solution - 1 & DP Solution -2 &   BB Solut
 \hline
 file & ( CPU Time ) DP Solution - 1 (ms) & DP Solution - 2 (ms) & BB Solution (ms) \\
 \hline
-4 &  178951.33 & 182053.49 &\\
+4 &  178951.33 & 182053.49 & $\ge 2h$ \\
 \hline
-5 & 480.71 & 1231.72 &\\
+5 & 480.71 & 1231.72 & $\ge 2h$\\
 \hline
 \end{tabular}
 \caption{CPU run time}

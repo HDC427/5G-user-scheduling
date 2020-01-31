@@ -8,21 +8,27 @@ class Solution:
     def __init__(cls, channels):
         cls.__channels = channels
         cls.__len = len(cls.__channels)
-    
-    def show_answer(cls):
+        cls.p = 0
+        cls.r = 0
         
-        r = 0
-        p = 0
+    def get_answer(cls):
+        
+        for i in range(cls.__len):
+            cls.p += sum(cls.__channels[i].x*cls.__channels[i].p)
+            cls.r += sum(cls.__channels[i].x*cls.__channels[i].r)
+            
+        return cls.p, cls.r
+            
+    def show_answer(cls, verbose=True):
         
         print(Channel.P)
         
-        for i in range(cls.__len):
-            print("channel %d: "%(i+1) , cls.__channels[i].x)
-            print(cls.__channels[i].p)
-            print(cls.__channels[i].r)
-            p += sum(cls.__channels[i].x*cls.__channels[i].p)
-            r += sum(cls.__channels[i].x*cls.__channels[i].r)
-        print("total power: ", p , "; total utility: ", r)
+#        for i in range(cls.__len):
+#                print("channel %d: "%(i+1) , cls.__channels[i].x)
+#                print(cls.__channels[i].p)
+#                print(cls.__channels[i].r)
+        
+        print("total power: ", cls.p , "; total utility: ", cls.r)
         
     def __e(cls, l, i):
         if 0 < l and l < len(cls.__channels[i].p):
@@ -163,7 +169,6 @@ class Solution:
                 continue;
             cls.__channels[i-1].x[l] = 1
             q -= cls.__channels[i-1].r[l]
-            print(q)
             if q <= 0:
                 break;
     
