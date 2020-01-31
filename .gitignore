@@ -12,3 +12,5 @@
 #python
 src/__pycache__
 
+#ipynb
+bin/.ipynb_checkpoints/
