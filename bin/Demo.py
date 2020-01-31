@@ -9,10 +9,11 @@ import matplotlib.pyplot as plt
 from Channel import Channel
 from Solution import Solution
 
-channel = Channel.read_testfile(3)
+channel = Channel.read_testfile(2)
 
 for i in range(Channel.N):
     #channel[i].display('original')
+    channel[i].preprocess_simple()
     channel[i].preprocess_IP()
     #channel[i].display('IP preprocess')
     channel[i].preprocess_LP()

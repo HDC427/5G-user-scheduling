@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from Channel import Channel
+import queue
 import numpy as np
 
 class Solution:
@@ -46,7 +47,7 @@ class Solution:
         print("total power: ", cls.p , "; total utility: ", cls.r)
         
     def __e(cls, l, i):
-        if 0 < l and l < len(cls.__channels[i].p)-1:
+        if 0 < l and l < len(cls.__channels[i].p):
             return (cls.__channels[i].r[l] - cls.__channels[i].r[l-1] )/(cls.__channels[i].p[l] - cls.__channels[i].p[l-1])
         elif l == 0:
             return cls.__channels[i].r[0] / cls.__channels[i].p[0]
@@ -60,44 +61,47 @@ class Solution:
             
         P = Channel.P
         
+        #chosen[n-1]=l means to allocate p_n,l to channel n
+        chosen = [-1 for i in range(cls.__len)]
+        
+        #simulate a priority queue
+        #PriorQ[:,1] are the serial numbers of channels
+        #PriorQ[:,0] are the corresponding e values
+        PriorQ = np.c_[[cls.__e(0, i) for i in range(cls.__len)], range(cls.__len)]
+        
         p_current = 0
-        l = [-1 for i in range(cls.__len)]
-        
-        e_max = -1
-        n_max = 0
-        
         while p_current < P:
-            for i in range(cls.__len):
-                e_current = cls.__e(l[i]+1, i)
-                if e_current >= e_max:
-                    e_max = e_current
-                    n_max = i
-    
-            if e_max <= 0:
-                break 
             
-            if l[n_max] >= 0:
-                p_current += cls.__channels[n_max].p[l[n_max]+1]  - cls.__channels[n_max].p[l[n_max]]
+            PriorQ = PriorQ[PriorQ[:,0].argsort()]
+            if PriorQ[-1,0] == -1:
+                break
+            #augmenting channel
+            ac = int(PriorQ[-1,1])
+            
+            #the power of ac advance by one step
+            if chosen[ac] >= 0:
+                p_current += cls.__channels[ac].p[chosen[ac]+1]  - cls.__channels[ac].p[chosen[ac]]
             else:
-                p_current += cls.__channels[n_max].p[0]
-            l[n_max] += 1
+                p_current += cls.__channels[ac].p[0]
+            chosen[ac] += 1
+            
+            PriorQ[-1,0] = cls.__e(chosen[ac]+1, ac)
         
-        print(n_max)
-        print('l', l)
-        if P == p_current:
+        if P >= p_current:
             for i in range(cls.__len):
-                if l[i] >= 0:
-                    cls.__channels[i].x[l[i]] = 1
-        elif P < p_current:
+                if chosen[i] >= 0:
+                    cls.__channels[i].x[chosen[i]] = 1
+        else:
+            last_assignment = int(PriorQ[-1,1])
             for i in range(cls.__len):
-                if i != n_max:
-                    if l[i] >= 0:
-                        cls.__channels[i].x[l[i]] = 1
-                else:
+                if i != last_assignment:
+                    if chosen[i] >= 0:
+                        cls.__channels[i].x[chosen[i]] = 1
+                elif chosen[i] > 0:
                     cls.__channels[i].x = cls.__channels[i].x.astype(np.float)
-                    epsilon = (p_current - P)/(cls.__channels[i].p[l[i]] - cls.__channels[i].p[l[i]-1])
-                    cls.__channels[i].x[l[i]-1] = epsilon
-                    cls.__channels[i].x[l[i]] = 1 - epsilon
+                    epsilon = (p_current - P)/(cls.__channels[i].p[chosen[i]] - cls.__channels[i].p[chosen[i]-1])
+                    cls.__channels[i].x[chosen[i]-1] = epsilon
+                    cls.__channels[i].x[chosen[i]] = 1 - epsilon
                     
     def DP_solution(cls):
         
