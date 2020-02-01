@@ -57,6 +57,13 @@ class Solution:
             return -1;
         
     def greedy_solution(cls):
+        '''
+        Each time we choose the channel whose current value of e
+        is maximal to augment its power allocation by one step
+        for the last allocation to satisfy the power budget restriction
+        we may not augment by one full step and we calculate the ratio
+        '''
+        
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
@@ -106,14 +113,19 @@ class Solution:
                     cls.__channels[i].x[chosen[i]] = 1 - epsilon
                     
     def DP_solution(cls):
+        '''
+        We define Pr(i,q) the problem of maximizing the total utility
+        with the first i channels and power budget q
+        we have the following DP equations
+        Pr(i,q) = max_l{Pr(i-1,q-p_{i,l})+r_{i,l} i>0
+        Pr(0,q) = 0
+        '''
+        
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
             
         P = Channel.P
-        
-        #We define Pr(i,q) the problem of maximizing the total utility
-        #with the first i channels and power budget q
         
         #dp[i,q] stores the solution to Pr(i,q) 
         dp = np.zeros((cls.__len+1, P+1), dtype=np.int)
@@ -148,6 +160,14 @@ class Solution:
                 break
     
     def DP_solution_2(cls):
+        '''
+        We define pr(i,q) the problem of minimizing the total power
+        with the first i channels to achieve a utility of q <= U = sum(channels.r_max)
+        we have the following DP equations
+        pr(i,q) = min_l{pr(i-1,q-r_{i,l})+p_{i,l} i>0
+        pr(i,q) = 0 q<0
+        pr(i,0) = 0
+        '''
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
@@ -157,9 +177,6 @@ class Solution:
         U = 0
         for i in range(cls.__len):
             U += cls.__channels[i].r[-1]
-        
-        #We define pr(i,q) the problem of minimizing the total power
-        #with the first i channels to achieve a utility of q
         
         #dp[i,q] stores the solution to pr(i,q)
         dp = np.array( [(U+1)*[np.infty] for i in range(cls.__len+1)] )
@@ -207,6 +224,16 @@ class Solution:
                 break;
     
     def BB_solution(cls):
+        '''
+        We define Q(L_1,...,L_N) the problem of finding the upper utility bound
+        with the restriction channel[n].p <= channel[n].p[L_n]
+        each loop we decrease one of the L_n by 1 and add
+        Q(L_1,...,L_n-1,...,L_N) to the tree
+        if sum_n(channel[n].p[L_n]) <= budget, we get a feasible allocation
+        and we no further decreasing L_n only leads to worse solution
+        so we stop adding sub-nodes for this branch 
+        '''
+        
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
@@ -217,7 +244,7 @@ class Solution:
         chosen = []
         
         root = [cls.__channels[i].size()-1 for i in range(cls.__len)]
-        root.append(cls.__len)
+        root.append(cls.__len) #*
         Q = [root]
         
         while Q:
@@ -236,6 +263,7 @@ class Solution:
             
             #we add a new node to Q as long as one upper bound can be decreased
             #if no upper bounds can be decreased, this is cas (3) and no subnode of l is added
+            #* we added a supplemental element to help avoid adding duplicate nodes
             for i in range(l[-1]):
                 if l[i] > 0:
                     l_new = l.copy()

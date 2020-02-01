@@ -7,7 +7,6 @@ if '../' not in sys.path:
     
 import matplotlib.pyplot as plt
 from Channel import Channel
-from Solution import Solution
 
 
 def display(ax, channel, label):

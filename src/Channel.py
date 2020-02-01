@@ -11,7 +11,7 @@ class Channel:
         cls.K = K
         cls.P = P
         
-        '''input p and r are K*M matrices'''
+        '''input p and r are both K*M matrices'''
         self.__originalData = np.array([p, r])
         
         self.p = p.flatten()
@@ -94,7 +94,7 @@ class Channel:
 
     @classmethod
     def read_testfile(cls, x):
-        '''x is the number of testfile'''
+        '''x is the serial number of testfile'''
         
         f = open("F:/X/2A/P2/INF421/testfiles/test%d.txt"%x)
         N = int(eval(f.readline()))
@@ -112,12 +112,6 @@ class Channel:
         #for the ith channel, rows [i*K,(i+1)*K[ are its values of p, rows [(i+N)*K,(i+N+1)*K[ are those of r
         
         return channel
-    
-    def display(self, lab='label'):
-        plt.xlabel('power')
-        plt.ylabel('rate')
-        plt.plot(self.p, self.r, label=lab)
-        plt.legend()
         
     def reset(self):
         self.x = np.zeros(self.__size, dtype=np.int)
