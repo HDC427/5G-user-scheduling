@@ -115,7 +115,27 @@ Note that the ponits in S form a convex curve, so that by $L$(A[i],S[0]) $<$ $L$
 
 \subsubsection{Question 5.}
 
-We presents the instances of 5 test files by the following 5 figures. The abscissa represents the powers and the ordinate represents the utility we get.
+\begin{table}[!htbp]
+\centering
+\begin{tabular}{|c|c|c|c|c|}%
+\hline
+file & original & simple preprocess & IP preprocess & LP preprocess  \\
+\hline
+1 & 24 & 24 & 10 & 8\\
+\hline
+2 & 24 & 4 & 4 & 4\\
+\hline
+3 & 24 & 24 & 13 & 9\\
+\hline
+4 & 614400 & 614400 & 14688 & 4974\\
+\hline
+5 & 2400 & 2400 & 329 & 193\\
+\hline
+\end{tabular}
+\caption{Preprocess results}
+\end{table}
+
+In the table above are the numbers of data for each test file after each phase of preprocessing. To better illustrate how the data are reduced, we present the graphs of the first 6 channels of testfile5 below. We see that after three types of preprocessing, the rate-power curve is increasing and convex.  
 
 \begin{figure}[htbp]
 \centering
@@ -146,8 +166,14 @@ We presents the instances of 5 test files by the following 5 figures. The abscis
 \includegraphics[width=6cm]{channel4.png}
 \caption{channel 5}
 \end{minipage}
+\begin{minipage}[t]{0.48\textwidth}
+\centering
+\includegraphics[width=6cm]{channel5.png}
+\caption{channel 6}
+\end{minipage}
 \end{figure}
 
+\newpage
 
 \subsubsection{Question 6.}
 \paragraph{Greedy Algorithm}
@@ -207,11 +233,11 @@ file & Optimal Rate by Greedy Solution & Optimal Rate by LP Solution  \\
 \hline
 2 & 0 & 0\\
 \hline
-3 & 350 (372.1 if linear combination allowed) & 350\\
+3 & 372.15 & 372.15\\
 \hline
-4 & 9210 & 9970\\
+4 & 9215.97 & 9970.25\\
 \hline
-5 & 1533 & 1655\\
+5 & 1573.11 & 1657.82\\
 \hline
 \end{tabular}
 \caption{Comparison between Two Solutions}
@@ -227,7 +253,7 @@ The cpu time of the \textit{testfile 4} and \textit{testfile 5} are in the table
 \hline
 file & CPU Time of Greedy Solution (ms)  \\
 \hline
-4 &  1010.27\\
+4 & 125\\
 \hline
 5 & 12.96\\
 \hline
@@ -331,32 +357,31 @@ By filling iteratively the matrix, we get the optimal allocation when $DP(N,r)$ 
 \item \textbf{return} $x$
 \end{enumerate}
 \subsubsection{Question 10. }
-\paragraph{Branch-and-Bound} We set each node as a subproblem defined as \textit{The highest utility we can get with the constraint : $[ l_{1}^{-} \leq l_1 \leq l_{1}^{+},...,l_{N}^{-}\leq l_N \leq l_{N}^{+})]$ }, where the tuple $( l_n^{-}, l_n^{+} )$ represents the lower an upper bound of each channel $n$. \\
+\paragraph{Branch-and-Bound} We set each node as a subproblem defined as \textit{The highest utility we can get with the constraint : $[1 \leq l_1 \leq L_1,...,1\leq l_N \leq L_N]$ }. \\
 
 \noindent\textsc{BB-solution}(p,r,N,M,K)
 \begin{enumerate}[1\ ]
 \setlength{\topsep}{0.05ex}
 \setlength{\itemsep}{0.05ex}
 \item $r_{max}$ = 0;
-\item $Q$ = $deque()$;
-\item \textsc{Push}$(Q, [(1,L),...,(1,L)])$
+\item Let Q be a queue
+\item \textsc{Push}(Q, [L,...,L])
 \item \textbf{while} $Q$ is not empty
-\item \qquad $[(l_1^{-},l_1^{+}),...,(1_N^{-},l_N^{+})]$ = \textsc{Pull}($Q$)
-\item \qquad \textbf{if} $\sum_{k=1}^{N} p_{l_{k}^{+}, k} \leq p$
-\item \qquad \qquad \textbf{if} $\sum_{k=1}^{N} r_{l_{k}^{+}, k} \geq r_{max}$
-\item \qquad \qquad \qquad $r_{max} = \sum_{k=1}^{N} r_{l_{k}^{+}, k}$
-\item \qquad \qquad \qquad $A_{best} = [l_1^{+},..., l_N^{+}]$
+\item \qquad $[L_1,...,L_N]$ = \textsc{Dequeue}($Q$)
+\item \qquad \textbf{if} $\sum_{n=1}^{N} p_{l_n, n} \leq p$
+\item \qquad \qquad \textbf{if} $\sum_{n=1}^{N} r_{l_n, n} \geq r_{max}$
+\item \qquad \qquad \qquad $r_{max} = \sum_{n=1}^{N} r_{l_n, n}$
+\item \qquad \qquad \qquad $A_{best} = [L_1,...,L_N]$
 \item \qquad \qquad \qquad \textbf{break}
-\item \qquad \textbf{for} k = 1 to n
-\item \qquad \qquad \textbf{if} $l_k^{-} \leq l_k^{+} - 1$
-\item \qquad \qquad \qquad \textbf{break}
-\item \qquad $mid = floor(\dfrac{l_k^{-} + l_k^{+}}{2})$
-\item \qquad \textsc{Push}( $Q$, $[(l_1^{-},l_1^{+}),...,(l_1^{-},mid),...,(1_N^{-},l_N^{+})]$
-\item \qquad \textsc{Push}( $Q$, $[(l_1^{-},l_1^{+}),...,(mid+1,l_k^{+}),...,(1_N^{-},l_N^{+})]$
+\item \qquad \textbf{for} n = 1 to N
+\item \qquad \qquad \textbf{if} $L_n > 1$
+\item \qquad \qquad \qquad \textsc{Push}( $Q$, $[L_1,...,L_n-1,...L_N]$)
 \item \textbf{for} n = 1 to N
 \item \qquad $x_{A_{best}[n],n} = 1$
 \item \textbf{return} $x$
 \end{enumerate}
+
+In the worst case, the algorithm will have to examine all possible nodes, which is in fact a brute-force algorithm, and the time complexity is $O(L^N)$
 
 \subsubsection{Question 11. }
 
@@ -395,6 +420,8 @@ file & ( CPU Time ) DP Solution - 1 (ms) & DP Solution - 2 (ms) & BB Solution (m
 \end{tabular}
 \caption{CPU run time}
 \end{table}
+
+For test files 4 and 5, the run time is so long that we did not get the result.
 
 \subsubsection{Question 12. }
 Inspired by the greedy Solution, we consider to establish a value \textit{payoff} to justify our choice. For example, in the greedy solution, we set the \textit{payoff} $ = \dfrac{\partial rate}{\partial power}$. We can also simply set the \textit{payoff} $ = rate$, which means every time we receieve an user, we offer him the channel which can give the most rate. \\
