@@ -34,7 +34,7 @@ class Online_Solution:
         for k in range(self.K):
             power_k = self.powers[k].flatten()
             rate_k = self.rates[k].flatten();
-            payoff = rate_k + rate_k / power_k / 10
+            payoff = 1*rate_k
             payoff_sorted = np.sort(payoff)
 
             max_payoff = 0
@@ -72,6 +72,8 @@ def statisticalAnalyse(lower_bound, upper_bound, n):
     max_power_real = []
     best_threshold = []
     
+    fig, ax = plt.subplots(2, 2)
+    
     for _ in range(n):
         os = Online_Solution()
         utility_serie = []
@@ -90,29 +92,32 @@ def statisticalAnalyse(lower_bound, upper_bound, n):
                                     os.powers[:,i,:], \
                                     os.rates[:,i,:]))    
         
-        for i in range(Channel.N):
-            channel[i].preprocess_simple()
-            channel[i].preprocess_IP()
-            channel[i].preprocess_LP()
+#        for i in range(Channel.N):
+#            channel[i].preprocess_simple()
+#            channel[i].preprocess_IP()
+#            channel[i].preprocess_LP()
         
         S = Solution(channel)
-        S.BB_solution()
+        S.DP_solution()
         p, r = S.get_answer()
+        
+        for i in range(Channel.N):
+            ax[i//2, i%2].scatter(channel[i].p, channel[i].r)
+            ax[i//2, i%2].scatter(channel[i].power, channel[i].rate)
         
         max_utility_real.append(r)
         max_power_real.append(p)
         
     print("average best threshold: ", np.mean(best_threshold))
     
-    plt.plot(range(n), max_utility_online)
-    plt.plot(range(n), max_utility_real)
-    print(max_power_online)
-    print(max_power_real)
-    print(max_utility_online)
-    print(max_utility_real)
+    #plt.plot(range(n), max_utility_online)
+    #plt.plot(range(n), max_utility_real)
+#    print(max_utility_online)
+#    print(max_utility_real)
+#    print(np.mean(np.array(max_utility_real) - np.array(max_utility_online)))
 
 
-statisticalAnalyse(50, 100, 10)
+statisticalAnalyse(80, 100, 1)
 
     
     

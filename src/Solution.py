@@ -11,6 +11,7 @@ class Solution:
         cls.__len = len(cls.__channels)
         cls.p = 0
         cls.r = 0
+        cls.LP = False
         
     def __assign(cls, i, l):
         '''assign to channel[i] the lth datum'''
@@ -18,12 +19,12 @@ class Solution:
         cls.__channels[i].rate = cls.__channels[i].r[l]
         cls.__channels[i].to_k_m(cls.__channels[i].L[l])
         
-    def get_answer(cls, LP=False):
+    def get_answer(cls):
         
         cls.p = 0
         cls.r = 0
         
-        if LP:
+        if cls.LP:
             for i in range(cls.__len):
                 cls.p += sum(cls.__channels[i].p*cls.__channels[i].x)
                 cls.r += sum(cls.__channels[i].r*cls.__channels[i].x)
@@ -34,11 +35,11 @@ class Solution:
                 
         return cls.p, cls.r
             
-    def show_answer(cls, LP=False):
+    def show_answer(cls):
         
         print('Power budget:', Channel.P)
         
-        if LP:
+        if cls.LP:
            for i in range(cls.__len):
                print(cls.__channels[i].x)
         else:
@@ -63,7 +64,7 @@ class Solution:
         for the last allocation to satisfy the power budget restriction
         we may not augment by one full step and we calculate the ratio
         '''
-        
+        cls.LP = True
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
@@ -120,7 +121,7 @@ class Solution:
         Pr(i,q) = max_l{Pr(i-1,q-p_{i,l})+r_{i,l} i>0
         Pr(0,q) = 0
         '''
-        
+        cls.LP = False
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
@@ -168,6 +169,7 @@ class Solution:
         pr(i,q) = 0 q<0
         pr(i,0) = 0
         '''
+        cls.LP = False
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
@@ -233,7 +235,7 @@ class Solution:
         and we no further decreasing L_n only leads to worse solution
         so we stop adding sub-nodes for this branch 
         '''
-        
+        cls.LP = False
         
         for i in range(cls.__len):
             cls.__channels[i].reset()
