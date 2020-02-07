@@ -3,6 +3,7 @@
 import sys
 if '../' not in sys.path:
     sys.path.append('../')
+    sys.path.append('../lib')
     sys.path.append('../src')
     
 import matplotlib.pyplot as plt
@@ -39,6 +40,8 @@ for f in range(5):
     print(size)
   
 plt.legend()
+
+plt.show()
     
     
 #    S = Solution(channel)

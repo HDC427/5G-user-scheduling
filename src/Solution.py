@@ -12,6 +12,7 @@ class Solution:
         cls.p = 0
         cls.r = 0
         cls.LP = False
+        cls.ZERO = True
         
     def __assign(cls, i, l):
         '''assign to channel[i] the lth datum'''
@@ -129,7 +130,8 @@ class Solution:
         P = Channel.P
         
         #dp[i,q] stores the solution to Pr(i,q) 
-        dp = np.zeros((cls.__len+1, P+1), dtype=np.int)
+        dp = np.array( [(P+1)*[-np.infty] for i in range(cls.__len+1)] )
+        dp[0,:] = 0
         
         #LastTask[i,q]=l means to solve Pr(i,q), the ith channel should
         #be allocated p_{l,i}
@@ -138,23 +140,30 @@ class Solution:
         for q in range(1, P+1):
             for i in range(1, cls.__len+1):
                 l_m = -1
-                dp[i,q] = dp[i-1,q]
+                
+                if cls.ZERO:
+                    dp[i,q] = dp[i-1,q]
                 
                 L = cls.__channels[i-1].size()
                 for l in range(L):
                     if q - cls.__channels[i-1].p[l] >= 0:
                         temp = dp[i-1, q - cls.__channels[i-1].p[l]] + cls.__channels[i-1].r[l]
-                        if temp >= dp[i,q]:
+                        if temp > dp[i,q]:
                             dp[i,q] = temp 
                             l_m = l
+                    elif not cls.ZERO:
+                        break
                 LastTask[i,q] = l_m
-                
+        
         q = P
         for i in range(cls.__len,0, -1):
             l = LastTask[i,q]
             if l == -1:
-                continue;
-            #cls.__channels[i-1].x[l] = 1
+                if cls.ZERO:
+                    continue;
+                else:
+                    print('No feasible solution')
+                    break;
             cls.__assign(i-1, l)
             q -= cls.__channels[i-1].power
             if q <= 0:
@@ -182,28 +191,35 @@ class Solution:
         
         #dp[i,q] stores the solution to pr(i,q)
         dp = np.array( [(U+1)*[np.infty] for i in range(cls.__len+1)] )
-        
+        if cls.ZERO:
+            dp[:,0] = 0
+        dp[0,0] = 0
         #LastTask[i,q]=l means to solve pr(i,q), the ith channel should
         #be allocated p_{l,i}
         LastTask = np.zeros((cls.__len+1, U+1), dtype=np.int)
         
-        for i in range(cls.__len):
-            dp[i,0] = 0;
-        
         r_m = U
-        for q in range(1,U+1):
+        for q in range(0,U+1):
             for i in range(1,cls.__len+1):
                 l_m = -1
-                dp[i,q] = dp[i-1,q]
+                
+                if cls.ZERO:
+                    dp[i,q] = dp[i-1,q]
+                    
                 L = cls.__channels[i-1].size()
                 for l in range(L):
+                    temp = np.infty
                     if q - cls.__channels[i-1].r[l] >= 0:
                         temp = dp[i-1, q - cls.__channels[i-1].r[l]] + cls.__channels[i-1].p[l]
-                        if temp <= dp[i,q]:
-                            dp[i,q] = temp 
-                            l_m = l
-                    elif cls.__channels[i-1].p[l] <= dp[i,q]:
-                        dp[i,q] = cls.__channels[i-1].p[l]
+                    elif cls.ZERO:
+                        temp = cls.__channels[i-1].p[l]
+                    else:
+                        temp = dp[i-1, 0] + cls.__channels[i-1].p[l]
+#                    elif cls.__channels[i-1].p[l] <= dp[i,q]:
+#                        dp[i,q] = cls.__channels[i-1].p[l]
+#                        l_m = l
+                    if temp < dp[i,q]:
+                        dp[i,q] = temp 
                         l_m = l
                 LastTask[i,q] = l_m
             
@@ -213,13 +229,12 @@ class Solution:
             if dp[cls.__len, q] > P:
                 r_m = q - 1
                 break;
-    
+                
         q = r_m 
         for i in range(cls.__len,0, -1):
             l = LastTask[i,q]
             if l == -1:
                 continue;
-            #cls.__channels[i-1].x[l] = 1
             cls.__assign(i-1, l)
             q -= cls.__channels[i-1].rate
             if q <= 0:
@@ -277,4 +292,8 @@ class Solution:
             for i in range(cls.__len):
                 cls.__assign(i, chosen[i])
         
+    def allow_zero(cls):
+        cls.ZERO = True
         
+    def disallow_zero(cls):
+        cls.ZERO = False
